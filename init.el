@@ -17,7 +17,7 @@
 
 ;;(tab-bar-mode)
 
-(setq display-line-numbers-type 'relative) 
+(setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode)
 
 (setq-default
@@ -29,7 +29,7 @@
 
 (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory))
 
-(add-to-list 'default-frame-alist '(font . "Comic Mono 22"))
+(add-to-list 'default-frame-alist '(font . "SF Mono 24"))
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -44,28 +44,32 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-
-
 ;; Always download packages if they are missing
 (setq package-enable-at-startup nil)
 
 (straight-use-package 'use-package)
 
+;; Configure use-package to use straight.el by default
+(use-package straight
+  :custom
+  (straight-use-package-by-default t))
+
 (use-package evil
-  :straight t
   :config
   (evil-mode 1))
 
+(use-package evil-commentary
+  :config
+  (evil-commentary-mode))
+
 ;; Code completion at point
 (use-package company
-  :straight t
   :hook (after-init . global-company-mode)
   :custom
   (company-idle-delay 0))
 
 ;; Better minibuffer completion
 (use-package vertico
-  :straight t
   :custom
   (vertico-cycle t)
   (read-buffer-completion-ignore-case t)
@@ -76,47 +80,50 @@
 
 ;; Save minibuffer results
 (use-package savehist
-  :straight t
   :init
   (savehist-mode))
 
 ;; Show lots of useful stuff in the minibuffer
 (use-package marginalia
   :after vertico
-  :straight t
   :init
   (marginalia-mode))
 
-(use-package doom-themes
-  :straight t
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-gruvbox t)
-
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-  ;; Enable custom neotree theme (all-the-icons must be installed!)
-  (doom-themes-neotree-config)
-  ;; or for treemacs users
-  (setq doom-themes-treemacs-theme "doom-palenight") ; use "doom-colors" for less minimal icon theme
-  (doom-themes-treemacs-config)
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
+;; (use-package doom-themes
+  ;; :straight t
+  ;; :config
+  ;; ;; Global settings (defaults)
+  ;; (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        ;; doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;; (load-theme 'doom-gruvbox t)
+;; 
+  ;; ;; Enable flashing mode-line on errors
+  ;; (doom-themes-visual-bell-config)
+  ;; ;; Enable custom neotree theme (all-the-icons must be installed!)
+  ;; (doom-themes-neotree-config)
+  ;; ;; or for treemacs users
+  ;; (setq doom-themes-treemacs-theme "doom-palenight") ; use "doom-colors" for less minimal icon theme
+  ;; (doom-themes-treemacs-config)
+  ;; ;; Corrects (and improves) org-mode's native fontification.
+  ;; (doom-themes-org-config))
 
 (use-package olivetti
-  :straight t
   :custom
   (olivetti-body-width 130))
 
+;; TODO: why it doesn't work??
+(use-package auto-olivetti
+  :straight (el-patch :type git :host sourcehut :repo "ashton314/auto-olivetti")
+  :config
+  (auto-olivetti-mode))
+
+(use-package org)
+
 (use-package rust-mode
-  :straight t
   :config
   (setq rust-format-on-save t))
 
 (use-package racer
-  :straight t
   :after rust-mode
   :diminish racer-mode
   :hook (rust-mode . racer-mode)
@@ -126,19 +133,15 @@
   (:map racer-mode-map ("M-." . nil)))
 
 (use-package magit
-  :straight t
   :bind (("C-x g" . magit-status)))
 
 
 (use-package treemacs
-  :straight t
   :defer t)
 
-(use-package all-the-icons
-  :straight t)
+(use-package all-the-icons)
 
 (use-package treemacs-evil
-  :straight t
   :after (treemacs evil))
 
 ;; TODO: install projectile
@@ -147,27 +150,22 @@
   ;;:ensure t)
 
 (use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :straight t)
+  :hook (dired-mode . treemacs-icons-dired-enable-once))
 
 (use-package treemacs-magit
-  :after (treemacs magit)
-  :straight t)
+  :after (treemacs magit))
 
 (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
   :after (treemacs)
-  :straight t
   :config (treemacs-set-scope-type 'Tabs))
 
 (use-package doom-modeline
-  :straight t
   :init
   (doom-modeline-mode 1))
 
-(use-package markdown-mode
-  :straight t)
+(use-package markdown-mode)
 
 (use-package rainbow-delimiters
-  :straight t
   :init
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
